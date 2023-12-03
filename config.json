@@ -1,5 +1,8 @@
 {
     "vp_epochs": 10,
-    "unet_epochs": 10
+    "unet_epochs": 20,
+
+    "base_path": "",
+    "vp_learning_rate": ""
     
 }
