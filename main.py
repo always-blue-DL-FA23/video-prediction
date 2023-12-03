@@ -29,6 +29,7 @@ transform = transforms.Compose([
     # Add any other transformations here
 ])
 base_path = '../dataset'
+base_path = '/scratch/dnp9357/dataset'
 
 train_dataset = VideoDataset(base_path, dataset_type='train', transform=transform)
 val_dataset = VideoDataset(base_path, dataset_type='val', transform=transform)
@@ -356,20 +357,20 @@ with torch.no_grad():
 
             # Predict the mask
             outputs = modelunet2(images)
-            predicted_mask = torch.argmax(outputs, dim=1)[0]
-            predicted_color_mask = mask_to_color(predicted_mask.cpu().numpy(), palette)
+            predicted_mask = torch.argmax(outputs, dim=1)[0].cpu().numpy()
+            # predicted_color_mask = mask_to_color(predicted_mask.cpu().numpy(), palette)
 
             # Actual mask
             actual_mask = masks[0].cpu().numpy()
-            actual_color_mask = mask_to_color(actual_mask, palette)
+            # actual_color_mask = mask_to_color(actual_mask, palette)
 
             # Plotting
             fig, axs = plt.subplots(1, 2, figsize=(12, 6))
-            axs[0].imshow(predicted_color_mask)
+            axs[0].imshow(predicted_mask)
             axs[0].set_title('Predicted Mask')
             axs[0].axis('off')
 
-            axs[1].imshow(actual_color_mask)
+            axs[1].imshow(actual_mask)
             axs[1].set_title('Actual Mask')
             axs[1].axis('off')
 
