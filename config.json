@@ -1,0 +1,5 @@
+{
+    "vp_epochs": 10,
+    "unet_epochs": 10
+    
+}
