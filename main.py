@@ -323,6 +323,12 @@ for epoch in range(num_epochs):
     train_loss = running_loss / len(train_loader)
     print(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
 
+
+unet_model_save_path = 'unet_model.pth'
+
+# Save the model's state dictionary
+torch.save(modelunet2.state_dict(), unet_model_save_path)
+
 # ------------------------------------------------ #
 
 # Function to generate a color palette
