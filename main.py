@@ -29,7 +29,7 @@ transform = transforms.Compose([
     # Add any other transformations here
 ])
 base_path = '../dataset'
-base_path = '/scratch/dnp9357/dataset'
+base_path = '/tmp/dataset'
 
 train_dataset = VideoDataset(base_path, dataset_type='train', transform=transform)
 val_dataset = VideoDataset(base_path, dataset_type='val', transform=transform)
