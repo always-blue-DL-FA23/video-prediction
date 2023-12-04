@@ -25,9 +25,6 @@
 mkdir /tmp/$USER
 export SINGULARITY_CACHEDIR=/tmp/$USER
 
-cp -rp /scratch/DL23SP/dataset.sqsh /tmp
-echo "Dataset is copied to /tmp"
-
 singularity exec --nv \
 --bind /scratch \
 --overlay /scratch/dnp9357/base_env/base_image.ext3:ro \
