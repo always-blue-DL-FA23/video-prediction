@@ -7,6 +7,7 @@ from torch.optim.lr_scheduler import OneCycleLR, ReduceLROnPlateau
 import torch.optim as optim
 import datetime
 import json
+import logging
 
 import torchmetrics
 
@@ -23,6 +24,12 @@ with open('config.json', 'r') as file:
     configs = json.load(file)
 # print(configs['vp_epochs'])
 # print(configs['unet_epochs'])
+
+# logging
+logname = 'vp_'+datetime.datetime.now()+'.log'
+logging.basicConfig(filename=logname, level=logging.INFO, 
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 
 transform = transforms.Compose([
     transforms.ToTensor(),
@@ -49,6 +56,7 @@ epochs=10
 shape_in = (11, 3, 128, 128)  # You need to adjust these dimensions based on your actual data
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
+logging.info(f"Using device: {device}")
 
 # Initialize the model
 model = SimVP(shape_in=shape_in).to(device)
@@ -61,6 +69,7 @@ total_steps = epochs * len(train_loader)  # Total number of training steps
 scheduler = OneCycleLR(optimizer, max_lr=0.01, total_steps=total_steps)
 
 print("before training")
+logging.info("This is an info message")
 
 
 # for epoch in range(int(configs['vp_epochs']):
@@ -88,7 +97,8 @@ for epoch in range(epochs):
         # Update the learning rate
         scheduler.step()
 
-        print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+        # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+        logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
     # now train on training dataset
     for batch in train_loader:
@@ -111,7 +121,8 @@ for epoch in range(epochs):
         # Update the learning rate
         scheduler.step()
 
-        print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+        # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+        logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
 model_save_path = 'my_model.pth'
 
@@ -120,6 +131,7 @@ torch.save(model.state_dict(), model_save_path)
 
 # Inform the user
 print(f'Model saved to {model_save_path}')
+logging.info(f'Model saved to {model_save_path}')
 
 
 # model_save_path = 'my_model.pth'
