@@ -26,10 +26,11 @@ with open('config.json', 'r') as file:
 # print(configs['unet_epochs'])
 
 # logging
-logname = 'vp_'+datetime.datetime.now()+'.log'
+logname = '../logs/vp_'+str(datetime.datetime.now())+'.log'
 logging.basicConfig(filename=logname, level=logging.INFO, 
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
+logging.info("here")
 
 transform = transforms.Compose([
     transforms.ToTensor(),
