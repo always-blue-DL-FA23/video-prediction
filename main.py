@@ -66,7 +66,7 @@ model.train()
 frame_prediction_criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 # OneCycleLR Scheduler
-total_steps = epochs * len(train_loader)  # Total number of training steps
+total_steps = epochs * (len(train_loader)+len(unlabeled_loader)) *2  # Total number of training steps
 scheduler = OneCycleLR(optimizer, max_lr=0.01, total_steps=total_steps)
 
 print("before training")
@@ -125,7 +125,7 @@ for epoch in range(epochs):
         # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
         logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
-model_save_path = '../outs/models/my_model.pth'
+model_save_path = '../outs/models/my_model_' +str(datetime.datetime.now())+'.pth'
 
 # Save the model's state dictionary
 torch.save(model.state_dict(), model_save_path)
@@ -142,7 +142,7 @@ print(f"Using device: {device}")
 model = SimVP(shape_in=shape_in).to(device)
 
 # Load the state dictionary
-state_dict = torch.load('../outs/models/my_model.pth')
+state_dict = torch.load(model_save_path)
 
 # Load the state dict into the model
 model.load_state_dict(state_dict)
