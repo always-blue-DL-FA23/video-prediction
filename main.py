@@ -125,7 +125,7 @@ for epoch in range(epochs):
         # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
         logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
-model_save_path = 'my_model.pth'
+model_save_path = '../outs/models/my_model.pth'
 
 # Save the model's state dictionary
 torch.save(model.state_dict(), model_save_path)
@@ -142,7 +142,7 @@ print(f"Using device: {device}")
 model = SimVP(shape_in=shape_in).to(device)
 
 # Load the state dictionary
-state_dict = torch.load('my_model.pth')
+state_dict = torch.load('../outs/models/my_model.pth')
 
 # Load the state dict into the model
 model.load_state_dict(state_dict)
@@ -167,23 +167,6 @@ with torch.no_grad():  # Disable gradient computation
 average_loss = total_loss / len(val_loader)
 print(f"Average MSE Loss on the validation dataset: {average_loss}")
 
-batch = next(iter(val_loader))
-input_frames, _ = batch
-input_frames = input_frames.to(device)
-
-# Predict the 22nd frame
-model.eval()
-with torch.no_grad():
-    predicted_frames = model(input_frames[:, :11])  # Use first 11 frames as input
-    predicted_22nd_frame = predicted_frames[:, -1]  # Extract the 22nd frame prediction
-
-# Move tensors to CPU for plotting
-predicted_22nd_frame = predicted_22nd_frame.cpu()
-actual_22nd_frame = input_frames[:, 21].cpu()  # Actual 22nd frame
-
-# Calculate the average loss
-average_loss = total_loss / len(validation_loader)
-print(f"Average MSE Loss on the validation dataset: {average_loss}")
 
 batch = next(iter(val_loader))
 input_frames, _ = batch
