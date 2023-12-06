@@ -166,6 +166,7 @@ with torch.no_grad():  # Disable gradient computation
 # Calculate the average loss
 average_loss = total_loss / len(val_loader)
 print(f"Average MSE Loss on the validation dataset: {average_loss}")
+logging.info(f"Average MSE Loss on the validation dataset: {average_loss}")
 
 
 batch = next(iter(val_loader))
@@ -314,10 +315,11 @@ for epoch in range(num_epochs):
         scheduler.step(loss)
         running_loss += loss.item()
         print(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
-
+        logging.info(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
     # Print training statistics
     train_loss = running_loss / len(train_loader)
     print(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
+    logging.info(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
 
 
 unet_model_save_path = 'unet_model.pth'
@@ -438,6 +440,7 @@ jaccard = torchmetrics.JaccardIndex(num_classes=49, task="multiclass").to(device
 iou_score = jaccard(predicted_masks, ground_truth_masks.to(device))
 
 print(f"Jaccard Index for INIITAL U-net(IoU) on validation: {iou_score}")
+logging.info(f"Jaccard Index for INIITAL U-net(IoU) on validation: {iou_score}")
 
 # ---------------------------- #
 
@@ -479,6 +482,7 @@ jaccard = torchmetrics.JaccardIndex(num_classes=49, task="multiclass").to(device
 iou_score = jaccard(predicted_masks_simvp, ground_truth_masks.to(device))
 
 print(f"Jaccard Index (IoU) for LINKED model on validation: {iou_score}")
+logging.info(f"Jaccard Index (IoU) for LINKED model on validation: {iou_score}")
 
 # ---------------------------- #
 
