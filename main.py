@@ -390,7 +390,7 @@ palette = generate_palette(49)
 #             axs[1].axis('off')
 
 #             plt.show()
-            break
+#             break
 
 # ------------------------------------------------ #
 
