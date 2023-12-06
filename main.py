@@ -26,11 +26,6 @@ with open('config.json', 'r') as file:
 # print(configs['vp_epochs'])
 # print(configs['unet_epochs'])
 
-# logging
-logname = '../outs/logs/vp_'+str(datetime.datetime.now())+'.log'
-logging.basicConfig(filename=logname, level=logging.INFO, 
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
 
 def datetime_formatted():
     # Get current date and time
@@ -38,6 +33,11 @@ def datetime_formatted():
     # Format the datetime as a string in the specified format
     formatted_now = now.strftime("%Y-%m-%d_%H:%M:%S")
     return str(formatted_now)
+
+# logging
+logname = '../outs/logs/vp_'+str(datetime_formatted)+'.log'
+logging.basicConfig(filename=logname, level=logging.INFO, 
+                    format='%(asctime)s - %(message)s')
 
 stime = datetime_formatted()
 logging.info("Logging beginning at "+str(stime))
@@ -66,7 +66,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 #training
 epochs=5
 shape_in = (11, 3, 128, 128)  # You need to adjust these dimensions based on your actual data
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 logging.info(f"Using device: {device}")
 
