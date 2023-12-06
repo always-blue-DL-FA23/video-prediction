@@ -30,7 +30,14 @@ logname = '../logs/vp_'+str(datetime.datetime.now())+'.log'
 logging.basicConfig(filename=logname, level=logging.INFO, 
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-logging.info("here")
+logging.info("Logging beginning at "+datetime_formatted())
+
+def datetime_formatted():
+    # Get current date and time
+    now = datetime.datetime.now()
+    # Format the datetime as a string in the specified format
+    formatted_now = now.strftime("%Y-%m-%d_%H:%M:%S")
+    return formatted_now
 
 transform = transforms.Compose([
     transforms.ToTensor(),
@@ -125,7 +132,7 @@ for epoch in range(epochs):
         # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
         logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
-model_save_path = '../outs/models/my_model_' +str(datetime.datetime.now())+'.pth'
+model_save_path = '../outs/models/my_model_' +str(datetime_formatted())+'.pth'
 
 # Save the model's state dictionary
 torch.save(model.state_dict(), model_save_path)
@@ -208,7 +215,7 @@ plt.title('Actual 22nd Frame')
 plt.axis('off')
 
 # plt.show()
-plt.savefig('my_plot.png') 
+plt.savefig('../outs/images/diff_plot_'+datetime_formatted()+'.png') 
 
 
 
@@ -520,7 +527,7 @@ axs[1].set_title('Actual Mask')
 axs[1].axis('off')
 
 plt.show()
-plt.savefig('final_out_'+str(datetime.datetime.now()))
+plt.savefig('final_out_'+str(datetime_formatted()))
 
 
 

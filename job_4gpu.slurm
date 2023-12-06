@@ -25,6 +25,7 @@
 mkdir /tmp/$USER
 export SINGULARITY_CACHEDIR=/tmp/$USER
 
+echo '4gpu'
 
 singularity exec --nv \
 --bind /scratch \

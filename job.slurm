@@ -25,6 +25,8 @@
 mkdir /tmp/$USER
 export SINGULARITY_CACHEDIR=/tmp/$USER
 
+echo '1gpu'
+
 singularity exec --nv \
 --bind /scratch \
 --overlay /scratch/dnp9357/base_env/base_image.ext3:ro \
