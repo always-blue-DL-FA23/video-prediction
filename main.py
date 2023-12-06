@@ -354,39 +354,39 @@ def mask_to_color(mask, palette):
 palette = generate_palette(49)
 
 # ------------------------------------------------ #
-
+# this section for demo purposes
 
 # Assuming 'model' is your trained U-Net model
-modelunet2.eval()
+# modelunet2.eval()
+# 
+# with torch.no_grad():
+#     # Iterate through the validation dataset
+#     for i, (images, masks) in enumerate(val_loader_image):
+#         # Process one sample for demonstration purposes
+#         if i == 0:  # Adjust the index if you want to display a different sample
+#             # Ensure images are in the shape [batch_size, channels, height, width]
+#             images = images.permute(0, 2, 3, 1).to(device)
 
-with torch.no_grad():
-    # Iterate through the validation dataset
-    for i, (images, masks) in enumerate(val_loader_image):
-        # Process one sample for demonstration purposes
-        if i == 0:  # Adjust the index if you want to display a different sample
-            # Ensure images are in the shape [batch_size, channels, height, width]
-            images = images.permute(0, 2, 3, 1).to(device)
+#             # Predict the mask
+#             outputs = modelunet2(images)
+#             predicted_mask = torch.argmax(outputs, dim=1)[0].cpu().numpy()
+#             # predicted_color_mask = mask_to_color(predicted_mask.cpu().numpy(), palette)
 
-            # Predict the mask
-            outputs = modelunet2(images)
-            predicted_mask = torch.argmax(outputs, dim=1)[0].cpu().numpy()
-            # predicted_color_mask = mask_to_color(predicted_mask.cpu().numpy(), palette)
+#             # Actual mask
+#             actual_mask = masks[0].cpu().numpy()
+#             # actual_color_mask = mask_to_color(actual_mask, palette)
 
-            # Actual mask
-            actual_mask = masks[0].cpu().numpy()
-            # actual_color_mask = mask_to_color(actual_mask, palette)
+#             # Plotting
+#             fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+#             axs[0].imshow(predicted_mask)
+#             axs[0].set_title('Predicted Mask')
+#             axs[0].axis('off')
 
-            # Plotting
-            fig, axs = plt.subplots(1, 2, figsize=(12, 6))
-            axs[0].imshow(predicted_mask)
-            axs[0].set_title('Predicted Mask')
-            axs[0].axis('off')
+#             axs[1].imshow(actual_mask)
+#             axs[1].set_title('Actual Mask')
+#             axs[1].axis('off')
 
-            axs[1].imshow(actual_mask)
-            axs[1].set_title('Actual Mask')
-            axs[1].axis('off')
-
-            plt.show()
+#             plt.show()
             break
 
 # ------------------------------------------------ #
