@@ -53,7 +53,7 @@ unlabeled_loader = DataLoader(unlabeled_dataset,batch_size=16,shuffle=True)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 #training
-epochs=10
+epochs=5
 shape_in = (11, 3, 128, 128)  # You need to adjust these dimensions based on your actual data
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
