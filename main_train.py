@@ -76,30 +76,30 @@ logging.info("This is an info message")
 # for epoch in range(int(configs['vp_epochs']):
 for epoch in range(epochs):
 
-    # first train on unlabeled dataset
-    for batch in unlabeled_loader:
-        images, _ = batch
+    # # first train on unlabeled dataset
+    # for batch in unlabeled_loader:
+    #     images, _ = batch
         
-        input_frames = images[:, :11].to(device)
-        target_frame = images[:, 21].to(device)
+    #     input_frames = images[:, :11].to(device)
+    #     target_frame = images[:, 21].to(device)
 
-        # Forward pass
-        predicted_frames = model(input_frames)
-        predicted_target_frame = predicted_frames[:, -1]
+    #     # Forward pass
+    #     predicted_frames = model(input_frames)
+    #     predicted_target_frame = predicted_frames[:, -1]
 
-        # Loss computation
-        loss = frame_prediction_criterion(predicted_target_frame, target_frame)
+    #     # Loss computation
+    #     loss = frame_prediction_criterion(predicted_target_frame, target_frame)
 
-        # Backward and optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+    #     # Backward and optimize
+    #     optimizer.zero_grad()
+    #     loss.backward()
+    #     optimizer.step()
 
-        # Update the learning rate
-        scheduler.step()
+    #     # Update the learning rate
+    #     scheduler.step()
 
-        # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
-        logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+    #     # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+    #     logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
     # now train on training dataset
     for batch in train_loader:
