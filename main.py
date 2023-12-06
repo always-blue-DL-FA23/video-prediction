@@ -30,12 +30,12 @@ with open('config.json', 'r') as file:
 def datetime_formatted():
     # Get current date and time
     now = datetime.datetime.now()
-    # Format the datetime as a string in the specified format
+    # Format the datetime as a string in the specified forma
     formatted_now = now.strftime("%Y-%m-%d_%H:%M:%S")
     return str(formatted_now)
 
 # logging
-logname = '../outs/logs/vp_'+str(datetime_formatted)+'.log'
+logname = '../outs/logs/vp_'+str(datetime_formatted())+'.log'
 logging.basicConfig(filename=logname, level=logging.INFO, 
                     format='%(asctime)s - %(message)s')
 
@@ -61,7 +61,7 @@ unlabeled_loader = DataLoader(unlabeled_dataset,batch_size=16,shuffle=True)
 
 
 # select cuda device if possible
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 #training
 epochs=5
