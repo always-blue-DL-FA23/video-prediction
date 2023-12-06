@@ -333,7 +333,7 @@ for epoch in range(num_epochs):
     logging.info(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
 
 
-unet_model_save_path = 'unet_model.pth'
+unet_model_save_path = '../outs/models/unet_model_'+datetime_formatted()+'.pth'
 
 # Save the model's state dictionary
 torch.save(modelunet2.state_dict(), unet_model_save_path)
