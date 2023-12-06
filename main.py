@@ -27,18 +27,21 @@ with open('config.json', 'r') as file:
 # print(configs['unet_epochs'])
 
 # logging
-logname = '../logs/vp_'+str(datetime.datetime.now())+'.log'
+logname = '../outs/logs/vp_'+str(datetime.datetime.now())+'.log'
 logging.basicConfig(filename=logname, level=logging.INFO, 
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-logging.info("Logging beginning at "+datetime_formatted())
 
 def datetime_formatted():
     # Get current date and time
     now = datetime.datetime.now()
     # Format the datetime as a string in the specified format
     formatted_now = now.strftime("%Y-%m-%d_%H:%M:%S")
-    return formatted_now
+    return str(formatted_now)
+
+stime = datetime_formatted()
+logging.info("Logging beginning at "+str(stime))
+print("Logging beginning at "+str(stime))
 
 transform = transforms.Compose([
     transforms.ToTensor(),
@@ -528,7 +531,7 @@ axs[1].set_title('Actual Mask')
 axs[1].axis('off')
 
 plt.show()
-plt.savefig('final_out_'+str(datetime_formatted()))
+plt.savefig('../outs/images/final_out_'+str(datetime_formatted()))
 
 
 
