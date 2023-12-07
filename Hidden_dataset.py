@@ -47,14 +47,14 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     # Add any other transformations here
 ])
-base_path = '../dataset'
+hidden_path = '/scratch/dnp9357/dataset'
 base_path = '/scratch/dnp9357/dataset'
 
 
 train_dataset = VideoDataset(base_path, dataset_type='train', transform=transform)
 val_dataset = VideoDataset(base_path, dataset_type='val', transform=transform)
 unlabeled_dataset = VideoDataset(base_path, dataset_type='unlabeled', transform=transform)
-hidden_dataset = HiddenVideoDataset(base_path,dataset_type='hidden', transform=transform)
+hidden_dataset = HiddenVideoDataset(hidden_path,dataset_type='hidden', transform=transform)
 
 # Create DataLoaders for each dataset
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
@@ -74,7 +74,7 @@ logging.info(f"Using device: {device}")
 print("Initialized the modal")
 logging.info("This is an info message")
 
-model_save_path = '/content/drive/MyDrive/Dataset_Student/simvp.pth'
+model_save_path = '../outs/models/my_model_2023-12-06_14:05:25.pth'
 #files.download(model_save_path)
 shape_in = (11, 3, 128, 128)
 print(f"Using device: {device}")
@@ -142,7 +142,7 @@ val_loader_image = DataLoader(val_dataset_image, batch_size=32, shuffle=False)
 # ------------------------------------------------ #
 
 # Initialize the U-Net model
-modelunet_save_path = '/content/drive/MyDrive/Dataset_Student/unet.pth'
+modelunet_save_path = '../outs/models/unet_model_2023-12-06_15:45:30.pth'
 n_channels = 3  # Assuming RGB images
 n_classes = 49  # Update this based on your number of classes
 modelunet2 = UNet(n_channels, n_classes).to(device)
