@@ -69,7 +69,13 @@ class HiddenVideoDataset(Dataset):
 
     def __getitem__(self, idx):
         image_paths = self.samples[idx]
-        images = [Image.open(path) for path in image_paths]
+
+        images =[]
+        for path in image_paths:
+            images.append(Image.open(path))
+            print(path)
+
+        # images = [Image.open(path) for path in image_paths]
 
         if self.transform is not None:
             images = [self.transform(image) for image in images]
