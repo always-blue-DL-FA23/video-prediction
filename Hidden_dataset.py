@@ -290,7 +290,7 @@ with torch.no_grad():
 print(predicted_masks_simvp_hidden.shape)  # Should be [1000, 160, 240]
 logging.info(f"Shape of hidden tensor is: {predicted_masks_simvp_hidden.shape}")
 # Convert to NumPy array
-teamid30_alwaysblue = predicted_masks_simvp_hidden.numpy()  # Use tensor.cpu().numpy() if your tensor is on GPU
+teamid30_alwaysblue = predicted_masks_simvp_hidden.cpu().numpy()  # Use tensor.cpu().numpy() if your tensor is on GPU
 
 # Save as .npy file
 np.save('teamid30_alwaysblue.npy', teamid30_alwaysblue) 
