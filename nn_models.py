@@ -46,6 +46,36 @@ class VideoDataset(Dataset):
 
         return images, mask
 
+class HiddenVideoDataset(Dataset):
+    def _init_(self, base_path, dataset_type='train', transform=None):
+        self.base_path = base_path
+        self.dataset_type = dataset_type
+        self.transform = transform
+        self.samples = self._load_samples()
+
+    def _load_samples(self):
+        samples = []
+        folder_path = os.path.join(self.base_path, self.dataset_type)
+        for video_folder in os.listdir(folder_path):
+            video_path = os.path.join(folder_path, video_folder)
+            image_count = 22 if self.dataset_type == 'unlabeled' else 22
+            images = [os.path.join(video_path, f'image_{i}.png') for i in range(0, image_count)]
+            #mask_path = os.path.join(video_path, 'mask.npy') if self.dataset_type != 'unlabeled' else None
+            samples.append(images)
+        return samples
+
+    def _len_(self):
+        return len(self.samples)
+
+    def _getitem_(self, idx):
+        image_paths, mask_path = self.samples[idx]
+        images = [Image.open(path) for path in image_paths]
+
+        if self.transform is not None:
+            images = [self.transform(image) for image in images]
+
+        images = torch.stack(images)
+        return images
 
 # class declarations
 class BasicConv2d(nn.Module):
