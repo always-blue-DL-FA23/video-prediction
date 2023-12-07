@@ -47,7 +47,7 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     # Add any other transformations here
 ])
-hidden_path = '/scratch/dnp9357/dataset'
+hidden_path = '/scratch/dnp9357'
 base_path = '/scratch/dnp9357/dataset'
 
 
