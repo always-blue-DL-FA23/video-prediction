@@ -58,7 +58,7 @@ class HiddenVideoDataset(Dataset):
         folder_path = os.path.join(self.base_path, self.dataset_type)
         for video_folder in os.listdir(folder_path):
             video_path = os.path.join(folder_path, video_folder)
-            image_count = 22 if self.dataset_type == 'unlabeled' else 22
+            image_count = 11 if self.dataset_type == 'unlabeled' else 11
             images = [os.path.join(video_path, f'image_{i}.png') for i in range(0, image_count)]
             #mask_path = os.path.join(video_path, 'mask.npy') if self.dataset_type != 'unlabeled' else None
             samples.append(images)
