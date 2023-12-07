@@ -261,7 +261,7 @@ model.to(device)
 modelunet2.eval()
 
 # Total number of videos and mask dimensions
-total_videos = 1000
+total_videos = 2000
 frame_height, frame_width = 160, 240
 
 # Tensor to store predicted masks
