@@ -17,7 +17,7 @@ from torchvision import transforms
 
 #local imports
 # import model_errors
-from nn_models import VideoDataset, SimVP
+from nn_models import VideoDataset, SimVP, HiddenVideoDataset
 from unet_models import ImageDataset, ImageDatasettrainunet, UNet
 
 # read config

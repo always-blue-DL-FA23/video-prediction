@@ -47,7 +47,7 @@ class VideoDataset(Dataset):
         return images, mask
 
 class HiddenVideoDataset(Dataset):
-    def _init_(self, base_path, dataset_type='train', transform=None):
+    def __init__(self, base_path, dataset_type='train', transform=None):
         self.base_path = base_path
         self.dataset_type = dataset_type
         self.transform = transform

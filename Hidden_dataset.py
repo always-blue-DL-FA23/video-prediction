@@ -17,7 +17,7 @@ from torchvision import transforms
 
 #local imports
 # import model_errors
-from nn_models import VideoDataset,HiddenVideoDataset, SimVP
+from nn_models import VideoDataset, HiddenVideoDataset, SimVP
 from unet_models import ImageDataset, ImageDatasettrainunet, UNet
 
 # read config
@@ -35,12 +35,12 @@ def datetime_formatted():
     return str(formatted_now)
 
 # logging
-logname = '../outs/logs/vp_'+str(datetime_formatted())+'.log'
-logging.basicConfig(filename=logname, level=logging.INFO, 
-                    format='%(asctime)s - %(message)s')
+# logname = '../outs/logs/vp_'+str(datetime_formatted())+'.log'
+# logging.basicConfig(filename=logname, level=logging.INFO, 
+                    # format='%(asctime)s - %(message)s')
 
 stime = datetime_formatted()
-logging.info("Logging beginning at "+str(stime))
+# logging.info("Logging beginning at "+str(stime))
 print("Logging beginning at "+str(stime))
 
 transform = transforms.Compose([
