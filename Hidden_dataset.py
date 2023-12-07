@@ -34,10 +34,10 @@ def datetime_formatted():
     formatted_now = now.strftime("%Y-%m-%d_%H:%M:%S")
     return str(formatted_now)
 
-# logging
-# logname = '../outs/logs/vp_'+str(datetime_formatted())+'.log'
-# logging.basicConfig(filename=logname, level=logging.INFO, 
-                    # format='%(asctime)s - %(message)s')
+logging
+logname = '../outs/logs/vp_'+str(datetime_formatted())+'.log'
+logging.basicConfig(filename=logname, level=logging.INFO, 
+                    format='%(asctime)s - %(message)s')
 
 stime = datetime_formatted()
 # logging.info("Logging beginning at "+str(stime))
@@ -48,7 +48,7 @@ transform = transforms.Compose([
     # Add any other transformations here
 ])
 base_path = '../dataset'
-base_path = '~/code/DL/dataset'
+base_path = '/scratch/dnp9357/dataset'
 
 
 train_dataset = VideoDataset(base_path, dataset_type='train', transform=transform)
