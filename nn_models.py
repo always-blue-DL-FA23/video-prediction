@@ -64,10 +64,10 @@ class HiddenVideoDataset(Dataset):
             samples.append(images)
         return samples
 
-    def _len_(self):
+    def __len__(self):
         return len(self.samples)
 
-    def _getitem_(self, idx):
+    def __getitem__(self, idx):
         image_paths, mask_path = self.samples[idx]
         images = [Image.open(path) for path in image_paths]
 
