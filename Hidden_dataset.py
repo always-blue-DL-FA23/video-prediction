@@ -48,7 +48,7 @@ transform = transforms.Compose([
     # Add any other transformations here
 ])
 base_path = '../dataset'
-base_path = '/scratch/dnp9357/dataset'
+base_path = '~/code/DL/dataset'
 
 
 train_dataset = VideoDataset(base_path, dataset_type='train', transform=transform)
