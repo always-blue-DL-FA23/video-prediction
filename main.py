@@ -44,8 +44,11 @@ logging.info("Logging beginning at "+str(stime))
 print("Logging beginning at "+str(stime))
 
 transform = transforms.Compose([
+    transforms.Resize((height, width)), # Specify your desired height and width
+    transforms.RandomHorizontalFlip(),
+    transforms.ColorJitter(), # You can specify parameters like brightness, contrast, etc.
     transforms.ToTensor(),
-    # Add any other transformations here
+    transforms.Normalize(mean, std) # Specify the mean and std for your dataset
 ])
 base_path = '../dataset'
 base_path = '/scratch/dnp9357/dataset'
@@ -64,7 +67,7 @@ unlabeled_loader = DataLoader(unlabeled_dataset,batch_size=16,shuffle=True)
 # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 #training
-epochs=5
+epochs=10
 shape_in = (11, 3, 128, 128)  # You need to adjust these dimensions based on your actual data
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
@@ -112,6 +115,7 @@ for epoch in range(epochs):
         # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
         logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
+for epoch in range(epochs):
     # now train on training dataset
     for batch in train_loader:
         images, _ = batch
@@ -296,7 +300,7 @@ optimizer = optim.Adam(modelunet2.parameters(), lr=0.001)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
 
 # Number of epochs
-num_epochs = 20
+num_epochs = 200
 total_steps = num_epochs * len(train_loader_image)
 
 for epoch in range(num_epochs):
@@ -325,7 +329,7 @@ for epoch in range(num_epochs):
         # Update the learning rate
         scheduler.step(loss)
         running_loss += loss.item()
-        print(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
+        # print(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
         logging.info(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
     # Print training statistics
     train_loss = running_loss / len(train_loader)
