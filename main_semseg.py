@@ -3,7 +3,7 @@ import os
 import torch
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
-from torch.optim.lr_scheduler import OneCycleLR, ReduceLROnPlateau
+from torch.optim.lr_scheduler import OneCycleLR, ReduceLROnPlateau, StepLR
 import torch.optim as optim
 import datetime
 import json
@@ -292,12 +292,13 @@ modelunet2 = UNet(n_channels, n_classes).to(device)
 
 # Loss function and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(modelunet2.parameters(), lr=0.001)
+optimizer = optim.Adam(modelunet2.parameters(), lr=0.01)
 # Learning rate scheduler
+scheduler = StepLR(optimizer, step_size=3500, gamma=0.1, verbose=False)
 # scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
 
 # Number of epochs
-num_epochs = 200
+num_epochs = 30
 total_steps = num_epochs * len(train_loader_image)
 
 for epoch in range(num_epochs):
@@ -324,10 +325,10 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
         # Update the learning rate
-        # scheduler.step(loss)
+        scheduler.step(loss)
         running_loss += loss.item()
         # print(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
-        logging.info(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
+        logging.info(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
     # Print training statistics
     train_loss = running_loss / len(train_loader)
     print(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
