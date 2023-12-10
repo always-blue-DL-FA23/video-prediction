@@ -303,6 +303,20 @@ total_steps = num_epochs * len(train_loader_image)
 
 unet_model_save_path = '../outs/models/unet_model_'+datetime_formatted()+'.pth'
 
+model_path = '../outs/models/unet_model_2023-12-10_04:07:22.pth'
+# Check if the model file exists
+if os.path.exists(model_path):
+    # Load the model
+    modelunet2.load_state_dict(torch.load(model_path))
+    print(f"Loaded model from {model_path}")
+    logging.info(f"Loaded model from {model_path}")
+    unet_model_save_path = model_path
+else:
+    print(f"No pre-trained model found at {model_path}")
+    logging.info(f"Loaded model from {model_path}")
+
+
+
 for epoch in range(num_epochs):
     modelunet2.train()
     running_loss = 0.0
