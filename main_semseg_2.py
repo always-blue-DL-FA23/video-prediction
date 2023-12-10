@@ -298,8 +298,10 @@ optimizer = optim.Adam(modelunet2.parameters(), lr=0.01)
 # scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
 
 # Number of epochs
-num_epochs = 150
+num_epochs = 200
 total_steps = num_epochs * len(train_loader_image)
+
+unet_model_save_path = '../outs/models/unet_model_'+datetime_formatted()+'.pth'
 
 for epoch in range(num_epochs):
     modelunet2.train()
@@ -334,8 +336,11 @@ for epoch in range(num_epochs):
     print(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
     logging.info(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
 
+    if (epoch + 1) % 20 == 0:
+        torch.save(modelunet2.state_dict(), unet_model_save_path)
 
-unet_model_save_path = '../outs/models/unet_model_'+datetime_formatted()+'.pth'
+
+
 
 # Save the model's state dictionary
 torch.save(modelunet2.state_dict(), unet_model_save_path)
