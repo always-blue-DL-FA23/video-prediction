@@ -44,9 +44,9 @@ val_dataset = VideoDataset(base_path, dataset_type='val', transform=transform)
 unlabeled_dataset = VideoDataset(base_path, dataset_type='unlabeled', transform=transform)
 
 # Create DataLoaders for each dataset
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=1, shuffle=True)
-unlabeled_loader = DataLoader(unlabeled_dataset,batch_size=16,shuffle=True)
+unlabeled_loader = DataLoader(unlabeled_dataset,batch_size=128,shuffle=True)
 
 #training
 epochs=10
