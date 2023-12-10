@@ -65,7 +65,7 @@ unlabeled_loader = DataLoader(unlabeled_dataset,batch_size=16,shuffle=True)
 
 #training
 epochs=10
-shape_in = (11, 3, 128, 128)  # You need to adjust these dimensions based on your actual data
+shape_in = (11, 3, 160, 240)  # You need to adjust these dimensions based on your actual data
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 logging.info(f"Using device: {device}")
@@ -110,7 +110,7 @@ for epoch in range(epochs):
         scheduler.step()
 
         # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
-        logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+        logging.info(f"Epoch Unlabeled [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
 for epoch in range(epochs):
     # now train on training dataset
@@ -135,7 +135,7 @@ for epoch in range(epochs):
         scheduler.step()
 
         # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
-        logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+        logging.info(f"Train Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
 model_save_path = '../outs/models/my_model_' +str(datetime_formatted())+'.pth'
 
