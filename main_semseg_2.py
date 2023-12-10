@@ -294,11 +294,11 @@ modelunet2 = UNet(n_channels, n_classes).to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(modelunet2.parameters(), lr=0.01)
 # Learning rate scheduler
-scheduler = StepLR(optimizer, step_size=3500, gamma=0.1, verbose=False)
+# scheduler = StepLR(optimizer, step_size=3500, gamma=0.1, verbose=False)
 # scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
 
 # Number of epochs
-num_epochs = 30
+num_epochs = 150
 total_steps = num_epochs * len(train_loader_image)
 
 for epoch in range(num_epochs):
@@ -325,7 +325,7 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
         # Update the learning rate
-        scheduler.step(loss)
+        # scheduler.step(loss)
         running_loss += loss.item()
         # print(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
         logging.info(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
