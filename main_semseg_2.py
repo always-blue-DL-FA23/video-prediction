@@ -330,7 +330,7 @@ for epoch in range(num_epochs):
         # scheduler.step(loss)
         running_loss += loss.item()
         # print(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
-        logging.info(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
+        logging.info(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
     # Print training statistics
     train_loss = running_loss / len(train_loader)
     print(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
