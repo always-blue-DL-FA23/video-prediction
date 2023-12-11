@@ -33,5 +33,5 @@ singularity exec --nv \
 source /ext3/env.sh
 cd /home/dnp9357/video-prediction
 pwd
-python3 main_semseg_2.py
+python3 main_tau.py
 "
