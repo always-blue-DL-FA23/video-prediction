@@ -8,6 +8,7 @@ import torch.optim as optim
 import datetime
 import json
 import logging
+import numpy as np
 
 import torchmetrics
 
@@ -16,7 +17,7 @@ from torchvision import transforms
 
 #local imports
 # import model_errors
-from nn_models import VideoDataset, SimVP
+from nn_models import VideoDataset, SimVP, HiddenVideoDataset, SimVPTAU
 from unet_models import ImageDataset, ImageDatasettrainunet, UNet
 
 # read config
@@ -25,16 +26,29 @@ with open('config.json', 'r') as file:
 # print(configs['vp_epochs'])
 # print(configs['unet_epochs'])
 
-# logging
-logname = '../logs/vp_'+str(datetime.datetime.now())+'.log'
-logging.basicConfig(filename=logname, level=logging.INFO, 
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-logging.info("here")
+def datetime_formatted():
+    # Get current date and time
+    now = datetime.datetime.now()
+    # Format the datetime as a string in the specified forma
+    formatted_now = now.strftime("%Y-%m-%d_%H:%M:%S")
+    return str(formatted_now)
+
+# logging
+logname = '../outs/logs/vp_'+str(datetime_formatted())+'.log'
+logging.basicConfig(filename=logname, level=logging.INFO, 
+                    format='%(asctime)s - %(message)s')
+
+stime = datetime_formatted()
+logging.info("Logging beginning at "+str(stime))
+print("Logging beginning at "+str(stime))
 
 transform = transforms.Compose([
+    # transforms.Resize((height, width)), # Specify your desired height and width
+    transforms.RandomHorizontalFlip(),
+    transforms.ColorJitter(), # You can specify parameters like brightness, contrast, etc.
     transforms.ToTensor(),
-    # Add any other transformations here
+    # transforms.Normalize(mean, std) # Specify the mean and std for your dataset
 ])
 base_path = '../dataset'
 base_path = '/scratch/dnp9357/dataset'
@@ -44,23 +58,20 @@ val_dataset = VideoDataset(base_path, dataset_type='val', transform=transform)
 unlabeled_dataset = VideoDataset(base_path, dataset_type='unlabeled', transform=transform)
 
 # Create DataLoaders for each dataset
-train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=1, shuffle=True)
-unlabeled_loader = DataLoader(unlabeled_dataset,batch_size=128,shuffle=True)
+unlabeled_loader = DataLoader(unlabeled_dataset,batch_size=16,shuffle=True)
+
 
 #training
 epochs=10
-shape_in = (11, 3, 128, 128)  # You need to adjust these dimensions based on your actual data
+shape_in = (11, 3, 160, 240)  # You need to adjust these dimensions based on your actual data
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 logging.info(f"Using device: {device}")
 
 # Initialize the model
-model = SimVP(shape_in=shape_in).to(device)
-
-if (torch.cuda.device_count() >1):
-    model = nn.DataParallel(model).to(device)
-
+model = SimVPTAU(shape_in=shape_in).to(device)
 model.train()
 
 frame_prediction_criterion = nn.MSELoss()
@@ -69,77 +80,78 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 total_steps = epochs * (len(train_loader)+len(unlabeled_loader)) *2  # Total number of training steps
 scheduler = OneCycleLR(optimizer, max_lr=0.01, total_steps=total_steps)
 
-print("before training")
-logging.info("This is an info message")
+# print("before training")
+# logging.info("This is an info message")
 
 
-# for epoch in range(int(configs['vp_epochs']):
-for epoch in range(epochs):
+# # for epoch in range(int(configs['vp_epochs']):
+# for epoch in range(epochs):
 
-    # first train on unlabeled dataset
-    for batch in unlabeled_loader:
-        images, _ = batch
+#     # first train on unlabeled dataset
+#     for batch in unlabeled_loader:
+#         images, _ = batch
         
-        input_frames = images[:, :11].to(device)
-        target_frame = images[:, 21].to(device)
+#         input_frames = images[:, :11].to(device)
+#         target_frame = images[:, 21].to(device)
 
-        # Forward pass
-        predicted_frames = model(input_frames)
-        predicted_target_frame = predicted_frames[:, -1]
+#         # Forward pass
+#         predicted_frames = model(input_frames)
+#         predicted_target_frame = predicted_frames[:, -1]
 
-        # Loss computation
-        loss = frame_prediction_criterion(predicted_target_frame, target_frame)
+#         # Loss computation
+#         loss = frame_prediction_criterion(predicted_target_frame, target_frame)
 
-        # Backward and optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+#         # Backward and optimize
+#         optimizer.zero_grad()
+#         loss.backward()
+#         optimizer.step()
 
-        # Update the learning rate
-        scheduler.step()
+#         # Update the learning rate
+#         scheduler.step()
 
-        # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
-        logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+#         # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+#         logging.info(f"Epoch Unlabeled [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
-    # now train on training dataset
-    for batch in train_loader:
-        images, _ = batch
-        input_frames = images[:, :11].to(device)
-        target_frame = images[:, 21].to(device)
+# for epoch in range(epochs):
+#     # now train on training dataset
+#     for batch in train_loader:
+#         images, _ = batch
+#         input_frames = images[:, :11].to(device)
+#         target_frame = images[:, 21].to(device)
 
-        # Forward pass
-        predicted_frames = model(input_frames)
-        predicted_target_frame = predicted_frames[:, -1]
+#         # Forward pass
+#         predicted_frames = model(input_frames)
+#         predicted_target_frame = predicted_frames[:, -1]
 
-        # Loss computation
-        loss = frame_prediction_criterion(predicted_target_frame, target_frame)
+#         # Loss computation
+#         loss = frame_prediction_criterion(predicted_target_frame, target_frame)
 
-        # Backward and optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+#         # Backward and optimize
+#         optimizer.zero_grad()
+#         loss.backward()
+#         optimizer.step()
 
-        # Update the learning rate
-        scheduler.step()
+#         # Update the learning rate
+#         scheduler.step()
 
-        # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
-        logging.info(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+#         # print(f"Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
+#         logging.info(f"Train Epoch [{epoch+1}/{epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {scheduler.get_last_lr()[0]}")
 
-model_save_path = '../outs/models/my_model_' +str(datetime.datetime.now())+'.pth'
+model_save_path = '../outs/models/my_model_2023-12-11_01:08:57.pth'
 
 # Save the model's state dictionary
-torch.save(model.state_dict(), model_save_path)
+# torch.save(model.state_dict(), model_save_path)
 
-# Inform the user
-print(f'Model saved to {model_save_path}')
-logging.info(f'Model saved to {model_save_path}')
+# # Inform the user
+# print(f'Model saved to {model_save_path}')
+# logging.info(f'Model saved to {model_save_path}')
 
 
 # model_save_path = 'my_model.pth'
 #files.download(model_save_path)
-shape_in = (11, 3, 128, 128)
+shape_in = (11, 3, 160, 240)
 print(f"Using device: {device}")
-model = SimVP(shape_in=shape_in).to(device)
+model = SimVPTAU(shape_in=shape_in).to(device)
 
 # Load the state dictionary
 state_dict = torch.load(model_save_path)
@@ -166,6 +178,7 @@ with torch.no_grad():  # Disable gradient computation
 # Calculate the average loss
 average_loss = total_loss / len(val_loader)
 print(f"Average MSE Loss on the validation dataset: {average_loss}")
+logging.info(f"Average MSE Loss on the validation dataset: {average_loss}")
 
 
 batch = next(iter(val_loader))
@@ -207,7 +220,7 @@ plt.title('Actual 22nd Frame')
 plt.axis('off')
 
 # plt.show()
-plt.savefig('my_plot.png') 
+plt.savefig('../outs/images/diff_plot_'+datetime_formatted()+'.png') 
 
 
 
@@ -284,7 +297,7 @@ optimizer = optim.Adam(modelunet2.parameters(), lr=0.001)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
 
 # Number of epochs
-num_epochs = 20
+num_epochs = 200
 total_steps = num_epochs * len(train_loader_image)
 
 for epoch in range(num_epochs):
@@ -313,14 +326,15 @@ for epoch in range(num_epochs):
         # Update the learning rate
         scheduler.step(loss)
         running_loss += loss.item()
-        print(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
-
+        # print(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
+        logging.info(f"Epoch [{epoch+1}/{num_epochs}], Step [{scheduler.last_epoch}/{total_steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]['lr']}")
     # Print training statistics
     train_loss = running_loss / len(train_loader)
     print(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
+    logging.info(f'Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss}')
 
 
-unet_model_save_path = 'unet_model.pth'
+unet_model_save_path = '../outs/models/unet_model_'+datetime_formatted()+'.pth'
 
 # Save the model's state dictionary
 torch.save(modelunet2.state_dict(), unet_model_save_path)
@@ -344,40 +358,40 @@ def mask_to_color(mask, palette):
 palette = generate_palette(49)
 
 # ------------------------------------------------ #
-
+# this section for demo purposes
 
 # Assuming 'model' is your trained U-Net model
-modelunet2.eval()
+# modelunet2.eval()
+# 
+# with torch.no_grad():
+#     # Iterate through the validation dataset
+#     for i, (images, masks) in enumerate(val_loader_image):
+#         # Process one sample for demonstration purposes
+#         if i == 0:  # Adjust the index if you want to display a different sample
+#             # Ensure images are in the shape [batch_size, channels, height, width]
+#             images = images.permute(0, 2, 3, 1).to(device)
 
-with torch.no_grad():
-    # Iterate through the validation dataset
-    for i, (images, masks) in enumerate(val_loader_image):
-        # Process one sample for demonstration purposes
-        if i == 0:  # Adjust the index if you want to display a different sample
-            # Ensure images are in the shape [batch_size, channels, height, width]
-            images = images.permute(0, 2, 3, 1).to(device)
+#             # Predict the mask
+#             outputs = modelunet2(images)
+#             predicted_mask = torch.argmax(outputs, dim=1)[0].cpu().numpy()
+#             # predicted_color_mask = mask_to_color(predicted_mask.cpu().numpy(), palette)
 
-            # Predict the mask
-            outputs = modelunet2(images)
-            predicted_mask = torch.argmax(outputs, dim=1)[0].cpu().numpy()
-            # predicted_color_mask = mask_to_color(predicted_mask.cpu().numpy(), palette)
+#             # Actual mask
+#             actual_mask = masks[0].cpu().numpy()
+#             # actual_color_mask = mask_to_color(actual_mask, palette)
 
-            # Actual mask
-            actual_mask = masks[0].cpu().numpy()
-            # actual_color_mask = mask_to_color(actual_mask, palette)
+#             # Plotting
+#             fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+#             axs[0].imshow(predicted_mask)
+#             axs[0].set_title('Predicted Mask')
+#             axs[0].axis('off')
 
-            # Plotting
-            fig, axs = plt.subplots(1, 2, figsize=(12, 6))
-            axs[0].imshow(predicted_mask)
-            axs[0].set_title('Predicted Mask')
-            axs[0].axis('off')
+#             axs[1].imshow(actual_mask)
+#             axs[1].set_title('Actual Mask')
+#             axs[1].axis('off')
 
-            axs[1].imshow(actual_mask)
-            axs[1].set_title('Actual Mask')
-            axs[1].axis('off')
-
-            plt.show()
-            break
+#             plt.show()
+#             break
 
 # ------------------------------------------------ #
 
@@ -438,6 +452,7 @@ jaccard = torchmetrics.JaccardIndex(num_classes=49, task="multiclass").to(device
 iou_score = jaccard(predicted_masks, ground_truth_masks.to(device))
 
 print(f"Jaccard Index for INIITAL U-net(IoU) on validation: {iou_score}")
+logging.info(f"Jaccard Index for INIITAL U-net(IoU) on validation: {iou_score}")
 
 # ---------------------------- #
 
@@ -479,6 +494,7 @@ jaccard = torchmetrics.JaccardIndex(num_classes=49, task="multiclass").to(device
 iou_score = jaccard(predicted_masks_simvp, ground_truth_masks.to(device))
 
 print(f"Jaccard Index (IoU) for LINKED model on validation: {iou_score}")
+logging.info(f"Jaccard Index (IoU) for LINKED model on validation: {iou_score}")
 
 # ---------------------------- #
 
@@ -516,7 +532,7 @@ axs[1].set_title('Actual Mask')
 axs[1].axis('off')
 
 plt.show()
-plt.savefig('final_out_'+str(datetime.datetime.now()))
+plt.savefig('../outs/images/final_out_'+str(datetime_formatted()))
 
 
 

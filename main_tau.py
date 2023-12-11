@@ -149,9 +149,9 @@ logging.info(f'Model saved to {model_save_path}')
 
 # model_save_path = 'my_model.pth'
 #files.download(model_save_path)
-shape_in = (11, 3, 128, 128)
+shape_in = (11, 3, 160, 240)
 print(f"Using device: {device}")
-model = SimVP(shape_in=shape_in).to(device)
+model = SimVPTAU(shape_in=shape_in).to(device)
 
 # Load the state dictionary
 state_dict = torch.load(model_save_path)
