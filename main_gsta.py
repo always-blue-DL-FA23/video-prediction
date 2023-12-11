@@ -51,8 +51,8 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     # transforms.Normalize(mean, std) # Specify the mean and std for your dataset
 ])
-base_path = '../dataset'
-base_path = '/scratch/dnp9357/dataset'
+#base_path = '../dataset'
+base_path = '/scratch/sa7445/data/dataset'
 
 train_dataset = VideoDataset(base_path, dataset_type='train', transform=transform)
 val_dataset = VideoDataset(base_path, dataset_type='val', transform=transform)
