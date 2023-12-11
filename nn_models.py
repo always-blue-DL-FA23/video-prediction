@@ -547,3 +547,77 @@ class SimVPTAU(nn.Module):
         Y = self.dec(hid, skip)
         Y = Y.reshape(B, T, C, H, W)
         return Y
+
+class MetaBlockgsta(nn.Module):
+    """The hidden Translator of MetaFormer for SimVP"""
+
+    def __init__(self, in_channels, out_channels, input_resolution=None,
+                 mlp_ratio=8., drop=0.0, drop_path=0.0, layer_i=0):
+        super(MetaBlockgsta, self).__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        #self.block = TAUSubBlock( in_channels, kernel_size=21, mlp_ratio=mlp_ratio,
+                #drop=drop, drop_path=drop_path, act_layer=nn.GELU)
+        self.block = GASubBlock(
+                in_channels, kernel_size=21, mlp_ratio=mlp_ratio,
+                drop=drop, drop_path=drop_path, act_layer=nn.GELU)
+        if in_channels != out_channels:
+            self.reduction = nn.Conv2d(
+                in_channels, out_channels, kernel_size=1, stride=1, padding=0)
+
+    def forward(self, x):
+        z = self.block(x)
+        return z if self.in_channels == self.out_channels else self.reduction(z)
+
+class MidMetaNetgsta(nn.Module):
+    """The hidden Translator of MetaFormer for SimVP"""
+    def __init__(self, channel_in, channel_hid, N2, input_resolution=None, mlp_ratio=4., drop=0.0, drop_path=0.1):
+        super(MidMetaNetgsta, self).__init__()
+        assert N2 >= 2 and mlp_ratio > 1
+        self.N2 = N2
+        dpr = [x.item() for x in torch.linspace(1e-2, drop_path, self.N2)]
+
+        # downsample
+        enc_layers = [MetaBlockgsta(
+            channel_in, channel_hid, input_resolution, mlp_ratio, drop, dpr[0], 0)]
+        # middle layers
+        for i in range(1, N2-1):
+            enc_layers.append(MetaBlockgsta(
+                channel_hid, channel_hid, input_resolution, mlp_ratio, drop, dpr[i], i))
+        # upsample
+        enc_layers.append(MetaBlockgsta(
+            channel_hid, channel_in, input_resolution, mlp_ratio, drop, drop_path, N2-1))
+        self.enc = nn.Sequential(*enc_layers)
+
+    def forward(self, x):
+        B, T, C, H, W = x.shape
+        x = x.reshape(B, T*C, H, W)
+
+        z = x
+        for i in range(self.N2):
+            z = self.enc[i](z)
+        return z
+
+class SimVPgsta(nn.Module):
+    def __init__(self, shape_in, hid_S=16, hid_T=256, N_S=4, N_T=8, incep_ker=[3,5,7,11], groups=8):
+        super(SimVPgsta, self).__init__()
+        T, C, H, W = shape_in
+        self.enc = Encoder(C, hid_S, N_S)
+        self.hid = MidMetaNetgsta(T*hid_S, hid_T, N_T,input_resolution=(H, W))
+        self.dec = Decoder(hid_S, C, N_S)
+
+
+    def forward(self, x_raw):
+        B, T, C, H, W = x_raw.shape
+        x = x_raw.reshape(B*T, C, H, W)
+
+        embed, skip = self.enc(x)
+        _, C_, H_, W_ = embed.shape
+
+        z = embed.view(B, T, C_, H_, W_)
+        hid = self.hid(z)
+        hid = hid.reshape(B*T, C_, H_, W_)
+
+        Y = self.dec(hid, skip)
+        Y = Y.reshape(B, T, C, H, W)
+        return Y
