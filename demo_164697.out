@@ -1,0 +1,5 @@
+1gpu
+/home/sa7445/video-prediction
+Logging beginning at 2023-12-11_02:57:04
+Using device: cuda
+Sanity Checking: |          | 0/? [00:00<?, ?it/s]                                                  

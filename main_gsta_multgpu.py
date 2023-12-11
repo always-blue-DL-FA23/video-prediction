@@ -46,10 +46,10 @@ print("Logging beginning at "+str(stime))
 
 transform = transforms.Compose([
     # transforms.Resize((height, width)), # Specify your desired height and width
-    #transforms.RandomHorizontalFlip(),
+    transforms.RandomHorizontalFlip(),
     transforms.ColorJitter(), # You can specify parameters like brightness, contrast, etc.
     transforms.ToTensor(),
-    transforms.Normalize(mean = [0.5061, 0.5045, 0.5008],std=[0.0571, 0.0567, 0.0614]) # Specify the mean and std for your dataset
+    # transforms.Normalize(mean, std) # Specify the mean and std for your dataset
 ])
 #base_path = '../dataset'
 base_path = '/scratch/sa7445/data/dataset'
@@ -65,14 +65,18 @@ unlabeled_loader = DataLoader(unlabeled_dataset,batch_size=16,shuffle=True)
 
 
 #training
-epochs=50
+epochs=30
 shape_in = (11, 3, 160, 240)  # You need to adjust these dimensions based on your actual data
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
+num_gpus = torch.cuda.device_count()
 logging.info(f"Using device: {device}")
+logging.info(f"# device: {num_gpus}")
+
 
 # Initialize the model
-model = SimVPgsta(shape_in=shape_in).to(device)
+model = SimVPgsta(shape_in=shape_in)
+nn.DataParallel(model).to(device) if num_gpus > 1 else model.to(device)
 model.train()
 
 frame_prediction_criterion = nn.MSELoss()
@@ -119,14 +123,6 @@ for epoch in range(epochs):
     epoch_duration_unlabeled = end_time_unlabeled - start_time_unlabeled
     logging.info(f"Epoch [{epoch+1}/{epochs}], Average Loss Epoch: {avg_epoch_loss}, Duration: {epoch_duration_unlabeled:.2f} seconds, LR: {scheduler.get_last_lr()[0]}")
 
-model_save_path = '../outs/models/my_model_unlabeled' +str(datetime_formatted())+'.pth'
-
-# Save the model's state dictionary
-torch.save(model.state_dict(), model_save_path)
-
-# Inform the user
-print(f'Model saved to {model_save_path}')
-logging.info(f'Unlabeled Model saved to {model_save_path}')
 
 for epoch in range(epochs):
     # now train on training dataset
@@ -161,14 +157,14 @@ for epoch in range(epochs):
     epoch_duration = end_time - start_time
     logging.info(f"Epoch [{epoch+1}/{epochs}], Average Loss Epoch Train: {avg_epoch_loss_train}, Duration: {epoch_duration:.2f} seconds, LR: {scheduler.get_last_lr()[0]}")
 
-model_save_path = '../outs/models/my_model_unlabeled_train' +str(datetime_formatted())+'.pth'
+model_save_path = '../outs/models/my_model_' +str(datetime_formatted())+'.pth'
 
 # Save the model's state dictionary
 torch.save(model.state_dict(), model_save_path)
 
 # Inform the user
 print(f'Model saved to {model_save_path}')
-logging.info(f'Unlabeled + Train Model saved to {model_save_path}')
+logging.info(f'Model saved to {model_save_path}')
 
 
 batch = next(iter(val_loader))

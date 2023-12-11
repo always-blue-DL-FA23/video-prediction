@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/sa7445/video-prediction/main_gsta_multgpu_lightning.py", line 131, in <module>
+    trainer = pl.Trainer(max_epochs=1, logger=logger, callbacks=[checkpoint_callback], gpus=-1)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ext3/miniconda3/lib/python3.11/site-packages/pytorch_lightning/utilities/argparse.py", line 70, in insert_env_defaults
+    return fn(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+TypeError: Trainer.__init__() got an unexpected keyword argument 'gpus'

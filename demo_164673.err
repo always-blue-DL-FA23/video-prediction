@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/sa7445/video-prediction/main_gsta_multgpu_lightning.py", line 90, in <module>
+    logname = '../outs/logs/vp_'+str(datetime_formatted())+'.log'
+                                     ^^^^^^^^^^^^^^^^^^^^
+  File "/home/sa7445/video-prediction/main_gsta_multgpu_lightning.py", line 14, in datetime_formatted
+    now = datetime.datetime.now()
+          ^^^^^^^^
+NameError: name 'datetime' is not defined

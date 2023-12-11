@@ -1,0 +1,21 @@
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Traceback (most recent call last):
+  File "/home/sa7445/video-prediction/main_gsta_multgpu_lightning.py", line 134, in <module>
+    trainer.fit(model, data_module)
+  File "/ext3/miniconda3/lib/python3.11/site-packages/pytorch_lightning/trainer/trainer.py", line 544, in fit
+    call._call_and_handle_interrupt(
+  File "/ext3/miniconda3/lib/python3.11/site-packages/pytorch_lightning/trainer/call.py", line 44, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ext3/miniconda3/lib/python3.11/site-packages/pytorch_lightning/trainer/trainer.py", line 580, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/ext3/miniconda3/lib/python3.11/site-packages/pytorch_lightning/trainer/trainer.py", line 937, in _run
+    _verify_loop_configurations(self)
+  File "/ext3/miniconda3/lib/python3.11/site-packages/pytorch_lightning/trainer/configuration_validator.py", line 37, in _verify_loop_configurations
+    __verify_train_val_loop_configuration(trainer, model)
+  File "/ext3/miniconda3/lib/python3.11/site-packages/pytorch_lightning/trainer/configuration_validator.py", line 81, in __verify_train_val_loop_configuration
+    raise NotImplementedError(
+NotImplementedError: Support for `training_epoch_end` has been removed in v2.0.0. `MyModel` implements this method. You can use the `on_train_epoch_end` hook instead. To access outputs, save them in-memory as instance attributes. You can find migration examples in https://github.com/Lightning-AI/lightning/pull/16520.
