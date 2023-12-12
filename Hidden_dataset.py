@@ -17,7 +17,7 @@ from torchvision import transforms
 
 #local imports
 # import model_errors
-from nn_models import VideoDataset, HiddenVideoDataset, SimVP
+from nn_models import VideoDataset, HiddenVideoDataset, SimVP, SimVPTAU, MyModel, MyModelSIMVP
 from unet_models import ImageDataset, ImageDatasettrainunet, UNet
 
 # read config
@@ -74,7 +74,7 @@ logging.info(f"Using device: {device}")
 print("Initialized the modal")
 logging.info("This is an info message")
 
-model_save_path = '../outs/models/my_model_2023-12-06_14:05:25.pth'
+model_save_path = '../outs/models/my_model_2023-12-06_14:05:25.cpkt'
 #files.download(model_save_path)
 shape_in = (11, 3, 128, 128)
 print(f"Using device: {device}")

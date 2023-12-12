@@ -621,3 +621,102 @@ class SimVPgsta(nn.Module):
         Y = self.dec(hid, skip)
         Y = Y.reshape(B, T, C, H, W)
         return Y
+
+
+class MyModel(pl.LightningModule):
+    def __init__(self, shape_in, learning_rate=0.001):
+        super().__init__()
+        self.model = SimVPgsta(shape_in=shape_in)
+        self.learning_rate = learning_rate
+        self.criterion = torch.nn.MSELoss()
+        self.start_time = 0
+
+    def forward(self, x):
+        return self.model(x)
+
+    def on_epoch_start(self):
+        # Record the start time of the epoch
+        self.start_time = time.time()
+
+    def on_epoch_end(self):
+        # Calculate and log the epoch duration
+        epoch_duration = time.time() - self.start_time
+        self.log('epoch_duration', epoch_duration)
+
+    def training_step(self, batch, batch_idx, dataset_type='labeled'):
+        images, _ = batch
+        input_frames = images[:, :11].to(self.device)
+        target_frame = images[:, 21].to(self.device)
+        predicted_frames = self(input_frames)
+        predicted_target_frame = predicted_frames[:, -1]
+        loss = self.criterion(predicted_target_frame, target_frame)
+        self.log(f'{dataset_type}_loss', loss)
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        images, _ = batch
+        input_frames = images[:, :11].to(self.device)
+        target_frame = images[:, 21].to(self.device)
+        predicted_frames = self(input_frames)
+        predicted_target_frame = predicted_frames[:, -1]
+        loss = self.criterion(predicted_target_frame, target_frame)
+        self.log('val_loss', loss)
+
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        return optimizer
+
+    def on_train_epoch_end(self):
+        # Manually iterate over the unlabeled dataset
+        unlabeled_loader = self.trainer.datamodule.unlabeled_dataloader()
+        for batch in unlabeled_loader:
+            self.training_step(batch, None, dataset_type='unlabeled')
+
+class MyModelSIMVP(pl.LightningModule):
+    def __init__(self, shape_in, learning_rate=0.001):
+        super().__init__()
+        self.model = SimVP(shape_in=shape_in)
+        self.learning_rate = learning_rate
+        self.criterion = torch.nn.MSELoss()
+        self.start_time = 0
+
+    def forward(self, x):
+        return self.model(x)
+
+    def on_epoch_start(self):
+        # Record the start time of the epoch
+        self.start_time = time.time()
+
+    def on_epoch_end(self):
+        # Calculate and log the epoch duration
+        epoch_duration = time.time() - self.start_time
+        self.log('epoch_duration', epoch_duration)
+
+    def training_step(self, batch, batch_idx, dataset_type='labeled'):
+        images, _ = batch
+        input_frames = images[:, :11].to(self.device)
+        target_frame = images[:, 21].to(self.device)
+        predicted_frames = self(input_frames)
+        predicted_target_frame = predicted_frames[:, -1]
+        loss = self.criterion(predicted_target_frame, target_frame)
+        self.log(f'{dataset_type}_loss', loss)
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        images, _ = batch
+        input_frames = images[:, :11].to(self.device)
+        target_frame = images[:, 21].to(self.device)
+        predicted_frames = self(input_frames)
+        predicted_target_frame = predicted_frames[:, -1]
+        loss = self.criterion(predicted_target_frame, target_frame)
+        self.log('val_loss', loss)
+
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        return optimizer
+
+    def on_train_epoch_end(self):
+        # Manually iterate over the unlabeled dataset
+        unlabeled_loader = self.trainer.datamodule.unlabeled_dataloader()
+        for batch in unlabeled_loader:
+            self.training_step(batch, None, dataset_type='unlabeled')
