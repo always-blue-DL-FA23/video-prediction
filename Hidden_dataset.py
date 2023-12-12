@@ -9,6 +9,9 @@ import datetime
 import json
 import logging
 import numpy as np
+import pytorch_lightning as pl
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.loggers import TensorBoardLogger
 
 import torchmetrics
 
@@ -74,9 +77,9 @@ logging.info(f"Using device: {device}")
 print("Initialized the modal")
 logging.info("This is an info message")
 
-model_save_path = '../outs/models/my_model_2023-12-06_14:05:25.cpkt'
+model_save_path = '../outs/models/epoch=42-step=172.ckpt'
 #files.download(model_save_path)
-shape_in = (11, 3, 128, 128)
+shape_in = (11, 3, 160, 240)
 print(f"Using device: {device}")
 model = MyModel(shape_in=shape_in).to(device)
 
