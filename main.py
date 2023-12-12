@@ -10,6 +10,10 @@ import json
 import logging
 import numpy as np
 
+import pytorch_lightning as pl
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.loggers import TensorBoardLogger
+
 import torchmetrics
 
 import matplotlib.pyplot as plt

@@ -78,7 +78,7 @@ model_save_path = '../outs/models/my_model_2023-12-06_14:05:25.cpkt'
 #files.download(model_save_path)
 shape_in = (11, 3, 128, 128)
 print(f"Using device: {device}")
-model = SimVP(shape_in=shape_in).to(device)
+model = MyModel(shape_in=shape_in).to(device)
 
 # Load the state dictionary
 state_dict = torch.load(model_save_path)
