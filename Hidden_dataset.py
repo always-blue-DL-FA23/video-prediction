@@ -81,13 +81,13 @@ model_save_path = '../outs/models/epoch=42-step=172.ckpt'
 #files.download(model_save_path)
 shape_in = (11, 3, 160, 240)
 print(f"Using device: {device}")
-model = MyModel(shape_in=shape_in).to(device)
+model = MyModel.load_from_checkpoint(model_save_path, shape_in=shape_in).to(device)
 
-# Load the state dictionary
-state_dict = torch.load(model_save_path)
+# # Load the state dictionary
+# state_dict = torch.load(model_save_path)
 
-# Load the state dict into the model
-model.load_state_dict(state_dict)
+# # Load the state dict into the model
+# model.load_state_dict(state_dict)
 
 print("model loaded")
 logging.info("Sim vp model loaded")
