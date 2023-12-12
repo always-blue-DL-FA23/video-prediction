@@ -145,7 +145,7 @@ val_loader_image = DataLoader(val_dataset_image, batch_size=32, shuffle=False)
 # ------------------------------------------------ #
 
 # Initialize the U-Net model
-modelunet_save_path = '../outs/models/unet_model_2023-12-06_15:45:30.pth'
+modelunet_save_path = '../outs/models/unet_model_2023-12-10_04:07:22.pth'
 n_channels = 3  # Assuming RGB images
 n_classes = 49  # Update this based on your number of classes
 modelunet2 = UNet(n_channels, n_classes).to(device)
