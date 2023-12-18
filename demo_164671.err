@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/home/sa7445/video-prediction/main_gsta_multgpu_lightning.py", line 83, in <module>
-    logname = '../outs/logs/vp_'+str(datetime_formatted())+'.log'
-                                     ^^^^^^^^^^^^^^^^^^
-NameError: name 'datetime_formatted' is not defined

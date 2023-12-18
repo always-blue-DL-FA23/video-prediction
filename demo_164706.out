@@ -1,5 +1,0 @@
-1gpu
-/home/sa7445/video-prediction
-Logging beginning at 2023-12-11_03:14:20
-Using device: cuda
-Sanity Checking: |          | 0/? [00:00<?, ?it/s]Sanity Checking:   0%|          | 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:   0%|          | 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:  50%|█████     | 1/2 [00:09<00:09,  0.11it/s]Sanity Checking DataLoader 0: 100%|██████████| 2/2 [00:09<00:00,  0.21it/s]                                                                           Training: |          | 0/? [00:00<?, ?it/s]Training:   0%|          | 0/8 [00:00<?, ?it/s]Epoch 0:   0%|          | 0/8 [00:00<?, ?it/s] 
