@@ -25,7 +25,7 @@ This project installs
 1. You can run the script directly if you are not using the HPC Slurm environment. However, for HPC environments, you will need to submit it as a Slurm job.
 
     First, set-up a conda environment, and while logged into an instance with GPUs, perform pip install using requirements.txt as shown above.
-    Then, traverse to the above mentioned outs directory, and submit job using:
+    Then, traverse to the above mentioned outs directory, and modify relevant details in job.slurm. Submit job using:
     ```
         sbatch ../video-prediction/job.slurm
     ```
